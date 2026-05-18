@@ -11,6 +11,14 @@ app.get("/", (request, response) => {
     });
 });
 
+app.get("/users", (request, response) => {
+    response.send({
+        CODE: response.statusCode,
+        MESSAGE: "Users List Fetched",
+        USERS: users,
+    });
+});
+
 app.listen(port, () => {
     console.log(`Lisening To ${port}`);
 });
