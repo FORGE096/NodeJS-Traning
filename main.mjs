@@ -81,6 +81,26 @@ app.put("/users/:id", (request, response) => {
     });
 });
 
+app.delete("/users/:id", (request, response) => {
+    const user = users.find(user => user.id === parseInt(request.params.id));
+
+    if (!user) {
+        console.log(user);
+        return response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: "User Not Found!",
+        });
+    }
+
+    const deletedUser = users.splice(user, 1);
+
+    response.send({
+        CODE: response.statusCode,
+        MESSAGE: "Done! User Deleted!",
+        USER: deletedUser,
+    });
+});
+
 app.listen(port, () => {
     console.log(`Lisening To ${port}`);
 });
