@@ -4,6 +4,13 @@ import express from "express";
 const app = express();
 const port = 6500;
 
+app.use((request, response, next) => {
+    console.log(`${request.method} ${request.url}`);
+    next();
+});
+ 
+app.use(express.json());
+
 app.get("/", (request, response) => {
     response.send({
         CODE: response.statusCode,
@@ -36,7 +43,17 @@ app.get("/users/:id", (request, response) => {
         });
         return;
     }
+});
 
+app.post("/users", (request, response) => {
+    const newUser = request.body;
+    users.push(newUser);
+    response.status(201).json({
+        CODE: response.statusCode,
+        MESSAGE: "User Created",
+        USER: newUser,
+        USERS: users,
+    });
 });
 
 app.listen(port, () => {
