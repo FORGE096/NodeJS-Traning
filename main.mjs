@@ -1,6 +1,7 @@
 import { users } from "./models/users.mjs";
 import express from "express";
 import { getAllUsers, getUserByID, postNewUser, updateUser, deleteUser } from "./controllers/users_controller.mjs";
+import { getMessage, postMessage } from "./controllers/messages_controller.mjs"
 
 const app = express();
 const port = 6500;
@@ -18,6 +19,10 @@ app.get("/", (request, response) => {
         MESSAGE: "All Done!",
     });
 });
+
+app.post("/messages", postMessage);
+
+app.get("/messages", getMessage);
 
 app.get("/users", getAllUsers);
 
