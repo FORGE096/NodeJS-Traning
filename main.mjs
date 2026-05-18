@@ -19,6 +19,15 @@ app.get("/users", (request, response) => {
     });
 });
 
+app.get("/users/:id", (request, response) => {
+    const id = request.params.id;
+    response.send({
+        CODE: response.statusCode,
+        MESSAGE: `User With ID ${id} Has Been Fetched!`,
+        USER: users[id],
+    });
+});
+
 app.listen(port, () => {
     console.log(`Lisening To ${port}`);
 });
