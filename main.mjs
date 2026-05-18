@@ -19,6 +19,8 @@ app.get("/", (request, response) => {
     });
 });
 
+app.get("/users", getAllUsers);
+
 app.get("/users/:id", getUserByID);
 
 app.post("/users", postNewUser);
