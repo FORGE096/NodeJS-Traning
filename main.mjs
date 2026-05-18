@@ -21,11 +21,22 @@ app.get("/users", (request, response) => {
 
 app.get("/users/:id", (request, response) => {
     const id = request.params.id;
-    response.send({
-        CODE: response.statusCode,
-        MESSAGE: `User With ID ${id} Has Been Fetched!`,
-        USER: users[id],
-    });
+    const user = users[id]
+    if (user) {
+        response.send({
+            CODE: response.statusCode,
+            MESSAGE: `User With ID ${id} Has Been Fetched!`,
+            USER: users[id],
+        });
+        return;
+    } else {
+        response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: `User Not Found With ID ${id}`,
+        });
+        return;
+    }
+
 });
 
 app.listen(port, () => {
