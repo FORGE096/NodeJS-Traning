@@ -8,7 +8,7 @@ app.use((request, response, next) => {
     console.log(`${request.method} ${request.url}`);
     next();
 });
- 
+
 app.use(express.json());
 
 app.get("/", (request, response) => {
@@ -52,6 +52,31 @@ app.post("/users", (request, response) => {
         CODE: response.statusCode,
         MESSAGE: "User Created",
         USER: newUser,
+        USERS: users,
+    });
+});
+
+app.put("/users/:id", (request, response) => {
+    var user = users[request.params.id];
+
+    if (!user) {
+        return response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: `User With ID ${user} Not Found`,
+        });
+    }
+    if (!request.body.name) {
+        return response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: `User With ID ${user} Not Found`,
+        });
+    }
+
+    user.name = request.body.name;
+    user.skill = request.body.skill ?? "None";
+    response.send({
+        CODE: response.statusCode,
+        user: user,
         USERS: users,
     });
 });
