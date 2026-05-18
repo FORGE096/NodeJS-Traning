@@ -1,8 +1,8 @@
 import { users } from "./models/users.mjs";
 import express from "express";
-import { getAllUsers, getUserByID, postNewUser, updateUser, deleteUser } from "./controllers/users_controller.mjs";
-import { getMessage, postMessage } from "./controllers/messages_controller.mjs"
-
+import { userRouter } from "./routes/users_router.mjs";
+import { messageRouter } from "./routes/messages_router.mjs";
+import { rootRouter } from "./routes/root_route.mjs";
 const app = express();
 const port = 6500;
 
@@ -13,26 +13,11 @@ app.use((request, response, next) => {
 
 app.use(express.json());
 
-app.get("/", (request, response) => {
-    response.send({
-        CODE: response.statusCode,
-        MESSAGE: "All Done!",
-    });
-});
+app.use("/", rootRouter);
 
-app.post("/messages", postMessage);
+app.use("/message", messageRouter);
 
-app.get("/messages", getMessage);
-
-app.get("/users", getAllUsers);
-
-app.get("/users/:id", getUserByID);
-
-app.post("/users", postNewUser);
-
-app.put("/users/:id", updateUser);
-
-app.delete("/users/:id", deleteUser);
+app.use("/users", userRouter);
 
 app.listen(port, () => {
     console.log(`Lisening To ${port}`);
