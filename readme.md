@@ -15,6 +15,27 @@ So What did I learn before creating this file (I mean this **README** file full 
 - Delete Request in ExpressJS
 - MVC structure in ExpressJS
 - ExpressJS Router
-- Sending Files With ExpressJS ** *(Now Im Here :D)*
+- Sending Files With ExpressJS *(Now Im Here :D)*
 
 Let's Get Started!
+
+I learned this too, but I tried to send both the image and a *JSON* in one response, but it seems like **it's not possible and HTTP can only have one content type (Content-Type) at a time.**
+
+and this is the code:
+
+```mjs
+function getUserImage(request, response) {
+    const imgPath = path.join(__dirname, "..", "public", "images", "man.png");
+    const id = request.params.id;
+    const user = users[id];
+
+    if (!user) {
+        return response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: `User With ID ${id} Not Found`,
+        });
+    } else {
+        response.sendFile(imgPath);
+    }
+}
+```
