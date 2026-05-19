@@ -1,4 +1,9 @@
 import { users } from "../models/users.mjs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function getAllUsers(request, response) {
     response.send({
@@ -83,10 +88,26 @@ function deleteUser(request, response) {
     });
 }
 
+function getUserImage(request, response) {
+    const imgPath = path.join(__dirname, "..", "public", "images", "man.png");
+    const id = request.params.id;
+    const user = users[id];
+
+    if (!user) {
+        return response.status(404).json({
+            CODE: response.statusCode,
+            MESSAGE: `User With ID ${id} Not Found`,
+        });
+    } else {
+        response.sendFile(imgPath);
+    }
+}
+
 export {
     getAllUsers,
     getUserByID,
     postNewUser,
     updateUser,
     deleteUser,
+    getUserImage,
 };
