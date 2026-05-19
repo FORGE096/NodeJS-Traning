@@ -90,13 +90,12 @@ function deleteUser(request, response) {
 
 function getUserImage(request, response) {
     const imgPath = path.join(__dirname, "..", "public", "images", "man.png");
-    const id = request.params.id;
-    const user = users[id];
-
+    const user = users.find(user => user.id === parseInt(request.params.id));
+    console.log(user);
     if (!user) {
         return response.status(404).json({
             CODE: response.statusCode,
-            MESSAGE: `User With ID ${id} Not Found`,
+            MESSAGE: `User With ID ${request.params.id} Not Found`,
         });
     } else {
         response.sendFile(imgPath);
