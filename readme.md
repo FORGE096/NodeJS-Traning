@@ -39,3 +39,32 @@ function getUserImage(request, response) {
     }
 }
 ```
+
+## MongoDB
+
+now im just learned something about MongoDB. like: how to save Data in MongoDB and I created a function to save some data
+from post method to database.
+
+```mjs
+function postNewUser(request, response) {
+    const { name, family, age } = request.body;
+    const newUser = { name, family, age };
+
+    console.log(newUser);
+
+    if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined) {
+        response.status(201).json({
+            CODE: response.statusCode,
+            MESSAGE: "User Created",
+            USER: newUser,
+            USERS: users,
+        });
+        createUser(newUser.name, newUser.family, newUser.age);
+    } else {
+        response.status(400).json({
+            CODE: response.statusCode,
+            MESSAGE: "Cannot Create User!",
+        });
+    }
+}
+```

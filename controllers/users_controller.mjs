@@ -1,6 +1,7 @@
 import { users } from "../models/users.mjs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createUser } from "../models/mongoose.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,14 +34,25 @@ function getUserByID(request, response) {
 }
 
 function postNewUser(request, response) {
-    const newUser = request.body;
-    users.push(newUser);
-    response.status(201).json({
-        CODE: response.statusCode,
-        MESSAGE: "User Created",
-        USER: newUser,
-        USERS: users,
-    });
+    const { name, family, age } = request.body;
+    const newUser = { name, family, age };
+
+    console.log(newUser);
+
+    if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined) {
+        response.status(201).json({
+            CODE: response.statusCode,
+            MESSAGE: "User Created",
+            USER: newUser,
+            USERS: users,
+        });
+        createUser(newUser.name, newUser.family, newUser.age);
+    } else {
+        response.status(400).json({
+            CODE: response.statusCode,
+            MESSAGE: "Cannot Create User!",
+        });
+    }
 }
 
 function updateUser(request, response) {
