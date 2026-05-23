@@ -1,7 +1,7 @@
 import { users } from "../models/users.mjs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createUser } from "../models/mongoose.mjs";
+import { createUser, getUser, getUserByQuery } from "../models/mongoose.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,39 +14,37 @@ function getAllUsers(request, response) {
     });
 }
 
-function getUserByID(request, response) {
-    const id = request.params.id;
-    const user = users[id]
-    if (user) {
+async function getUserByID(request, response) {
+    const name = request.params.name;
+    const isUserExist = await getUser(name);
+    if (isUserExist) {
         response.send({
             CODE: response.statusCode,
-            MESSAGE: `User With ID ${id} Has Been Fetched!`,
-            USER: users[id],
+            MESSAGE: `User With Name ${name} Has Been Fetched!`,
+            USER: isUserExist,
         });
-        return;
     } else {
         response.status(404).json({
             CODE: response.statusCode,
-            MESSAGE: `User Not Found With ID ${id}`,
+            MESSAGE: `User Not Found With Name ${name}`,
         });
-        return;
     }
 }
 
 function postNewUser(request, response) {
-    const { name, family, age } = request.body;
-    const newUser = { name, family, age };
+    const { name, family, age, codeMelli } = request.body;
+    const newUser = { name, family, age, codeMelli };
 
     console.log(newUser);
 
-    if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined) {
+    if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined && codeMelli !== undefined) {
         response.status(201).json({
             CODE: response.statusCode,
             MESSAGE: "User Created",
             USER: newUser,
             USERS: users,
         });
-        createUser(newUser.name, newUser.family, newUser.age);
+        createUser(newUser.name, newUser.family, newUser.age, newUser.codeMelli);
     } else {
         response.status(400).json({
             CODE: response.statusCode,
@@ -114,6 +112,28 @@ function getUserImage(request, response) {
     }
 }
 
+async function getUserBySearch(request, response) {
+    const { name, codeMelli } = request.query;
+
+    if (!name || !codeMelli) {
+        return response.status(400).json({
+            CODE: response.statusCode,
+            MESSAGE: "Both 'name' and 'codeMelli' are required"
+        });
+    }
+
+    try {
+        const user = await getUserByQuery(name, codeMelli);
+        if (user) {
+            response.json({ CODE: response.statusCode, USER: user });
+        } else {
+            response.status(404).json({ CODE: response.statusCode, MESSAGE: "User not found" });
+        }
+    } catch (error) {
+        response.status(500).json({ CODE: response.statusCode, MESSAGE: err.message });
+    }
+}
+
 export {
     getAllUsers,
     getUserByID,
@@ -121,4 +141,5 @@ export {
     updateUser,
     deleteUser,
     getUserImage,
+    getUserBySearch,
 };
