@@ -1,7 +1,7 @@
 import { users } from "../models/users.mjs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createUser, getUser, getUserByQuery } from "../models/mongoose.mjs";
+import { createUser, getUser, getUserByQuery, updateUserInDB } from "../models/mongoose.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -130,7 +130,55 @@ async function getUserBySearch(request, response) {
             response.status(404).json({ CODE: response.statusCode, MESSAGE: "User not found" });
         }
     } catch (error) {
-        response.status(500).json({ CODE: response.statusCode, MESSAGE: err.message });
+        response.status(500).json({ CODE: response.statusCode, MESSAGE: error.message });
+    }
+}
+
+async function updateUserByQuery(request, response) {
+
+    const { name, newName, newFamily, codeMelli } = request.body;
+
+    if (!newName || !newFamily || !codeMelli) {
+        return response.status(400).json({
+            CODE: response.statusCode,
+            MESSAGE: "Both 'name' and 'family' are required"
+        });
+    }
+
+    try {
+        const user = await getUserByQuery(name, codeMelli);
+        if (user) {
+            try {
+                const updateResult = await updateUserInDB(codeMelli, newName, newFamily);
+                if (updateResult.matchedCount > 0) {
+                    return response.status(200).json({
+                        CODE: response.statusCode,
+                        MESSAGE: "User Updated!",
+                        NEWUSER: updateResult,
+                    });
+                } else {
+                    return response.status(404).json({
+                        CODE: response.statusCode,
+                        MESSAGE: "User Not Found with that codeMelli!",
+                    });
+                }
+            } catch (error) {
+                return response.status(500).json({
+                    CODE: response.statusCode,
+                    MESSAGE: error.message,
+                });
+            }
+        } else {
+            return response.status(404).json({
+                CODE: response.statusCode,
+                MESSAGE: "User Not Found with given name and codeMelli!",
+            });
+        }
+    } catch (error) {
+        return response.status(500).json({
+            CODE: response.statusCode,
+            MESSAGE: error.message,
+        });
     }
 }
 
@@ -142,4 +190,5 @@ export {
     deleteUser,
     getUserImage,
     getUserBySearch,
-};
+    updateUserByQuery,
+}; 

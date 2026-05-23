@@ -47,8 +47,22 @@ async function getUserByQuery(name, codeMelli) {
     }
 }
 
+async function updateUserInDB(codeMelli, newName, newFamily) {
+
+    const result = await User.updateOne({ codeMelli: codeMelli }, {
+        $set: {
+            name: newName,
+            family: newFamily,
+        }
+    });
+
+    console.log(result);
+    return result;
+}
+
 export {
     createUser,
     getUserByQuery,
     getUser,
+    updateUserInDB,
 }
