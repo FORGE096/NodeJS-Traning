@@ -3,10 +3,31 @@ import mongoose from "mongoose";
 mongoose.connect("mongodb://localhost/testDB").then(() => console.log("Connected!")).catch(() => console.log("Cannot Connect"));
 
 const userSchema = mongoose.Schema({
-    name: String,
-    family: String,
-    codeMelli: String,
-    age: Number,
+    name: {
+        type: String,
+        required: true,
+        minlength: 3,
+    },
+    family: {
+        type: String,
+        required: true,
+    },
+    codeMelli: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function (v) {
+                return v.length === 10;
+            },
+            message: 'Code Melli Length Should Be 10'
+        }
+    },
+    age: {
+        type: Number,
+        required: true,
+        min: 5,
+        max: 99
+    },
 });
 
 const User = mongoose.model('User', userSchema);

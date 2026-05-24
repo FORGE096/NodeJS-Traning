@@ -31,11 +31,34 @@ async function getUserByID(request, response) {
     }
 }
 
-function postNewUser(request, response) {
+async function postNewUser(request, response) {
     const { name, family, age, codeMelli } = request.body;
-    const newUser = { name, family, age, codeMelli };
 
-    console.log(newUser);
+    try {
+        const newUser = await createUser(name, family, age, codeMelli);
+
+        response.status(201).json({
+            CODE: response.statusCode,
+            MESSAGE: "User Created",
+            USER: newUser,
+        });
+
+    } catch (error) {
+        if (error.name === "ValidationError") {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return response.status(400).json({
+                CODE: response.statusCode,
+                MESSAGE: "Validation Error",
+                ERRORS: messages,
+            });
+        }
+
+        return response.status(500).json({
+            CODE: response.statusCode,
+            MESSAGE: "Internal Server Error",
+            ERROR: error.message,
+        });
+    }
 
     if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined && codeMelli !== undefined) {
         response.status(201).json({
@@ -44,7 +67,7 @@ function postNewUser(request, response) {
             USER: newUser,
             USERS: users,
         });
-        createUser(newUser.name, newUser.family, newUser.age, newUser.codeMelli);
+        await createUser(newUser.name, newUser.family, newUser.age, newUser.codeMelli);
     } else {
         response.status(400).json({
             CODE: response.statusCode,
