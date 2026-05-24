@@ -59,21 +59,6 @@ async function postNewUser(request, response) {
             ERROR: error.message,
         });
     }
-
-    if (newUser.name !== undefined && newUser.family !== undefined && newUser.age !== undefined && codeMelli !== undefined) {
-        response.status(201).json({
-            CODE: response.statusCode,
-            MESSAGE: "User Created",
-            USER: newUser,
-            USERS: users,
-        });
-        await createUser(newUser.name, newUser.family, newUser.age, newUser.codeMelli);
-    } else {
-        response.status(400).json({
-            CODE: response.statusCode,
-            MESSAGE: "Cannot Create User!",
-        });
-    }
 }
 
 function updateUser(request, response) {
